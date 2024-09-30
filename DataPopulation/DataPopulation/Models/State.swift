@@ -7,6 +7,14 @@
 
 import Foundation
 
+typealias StatePopulation = [State]
+
+// MARK: - Api Response
+struct StateApiResponse: Codable {
+    let data: [State]?
+    let source : Source
+}
+
 struct State : Codable {
     
     let idState : String

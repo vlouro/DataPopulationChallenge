@@ -7,6 +7,14 @@
 
 import Foundation
 
+typealias NationPopulation = [Nation]
+
+// MARK: - Api Response
+struct NationApiResponse: Codable {
+    let data: [Nation]?
+    let source : Source
+}
+
 struct Nation : Codable {
     let idNation : String
     let nation : String
