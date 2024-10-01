@@ -43,11 +43,11 @@ class NationListViewController: UIViewController {
     
     //MARK: SETUP VIEW
     func setupViews() {
-        self.title = "NationList"
+        self.title = "Nation List"
         self.view.backgroundColor = .white
         self.nationCollectionView.delegate = self
         self.nationCollectionView.dataSource = self
-        self.nationCollectionView.register(UINib(nibName: "NationListCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: cellIdentifier)
+        self.nationCollectionView.register(PopulationListViewCell.self, forCellWithReuseIdentifier: cellIdentifier)
         self.view.addSubview(nationCollectionView)
         
         NSLayoutConstraint.activate([
@@ -59,13 +59,25 @@ class NationListViewController: UIViewController {
     }
     
     func initViewModel() {
-        
-        viewModel.getNationData()
+        if viewModel.getNationData() == true {
+            let alert = UIAlertController(title: "Alert", message: "An error as occured loading the list, please try again", preferredStyle: UIAlertController.Style.alert)
+            alert.addAction(UIAlertAction(title: "Yes", style: .default, handler: {_ in 
+                self.initViewModel()
+                }))
+            alert.addAction(UIAlertAction(title: "No", style: .cancel, handler: {_ in
+                self.showViewError()
+            }))
+            self.present(alert, animated: true, completion: nil)
+        }
         viewModel.reloadCollectionView = { [weak self] in
             DispatchQueue.main.async {
                 self?.nationCollectionView.reloadData()
             }
         }
+    }
+    
+    func showViewError() {
+        
     }
     
 }
@@ -76,6 +88,8 @@ extension NationListViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
 
             let cell = nationCollectionView.dequeueReusableCell(withReuseIdentifier: self.cellIdentifier, for: indexPath) as! PopulationListViewCell
+            cell.cellViewModel = self.viewModel.nationCellViewModels[indexPath.row]
+            cell.layer.addBorder(edge: .bottom, color: .gray, thickness: 1)
             return cell
     }
     

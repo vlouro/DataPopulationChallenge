@@ -26,29 +26,43 @@ class StateViewModel: NSObject {
     
     //MARK: Get State Data
     func getStateData() {
-
-        
-            NetworkRequests.shared.getPopulationNationList { result in
-                switch result {
-                    
-                case let .success(productList):
-                    //self.decodeProducts(productsData: productList)
-                    break
-                case .error(_):
-                    print("There was an error")
+        NetworkRequests.shared.getPopulationStateList { result in
+            switch result {
+                
+            case let .success(stateListResponse):
+                guard let stateDataResponse =  stateListResponse as? StateApiResponse else {
+                    return
                 }
+                
+                self.decodeStateData(stateData: stateDataResponse)
+                break
+            case .error(_):
+                print("There was an error")
             }
+        }
     }
     
-    func decodeNationData(nationData: NationApiResponse) {
+    func decodeStateData(stateData: StateApiResponse) {
+        guard let stateData = stateData.data, stateData.count > 0 else {
+            return
+        }
         
+        var vms = [PopulationListCellViewModel]()
+        
+        for state in stateData {
+            vms.append(self.createPopulationCellModel(population: state))
+        }
+        
+        self.stateCellViewModels = vms
     }
     
-    func createPopulationCellModel(product: Nation) -> PopulationListCellViewModel {
+    func createPopulationCellModel(population: State) -> PopulationListCellViewModel {
         
-        var icon = ""
-       
-        return PopulationListCellViewModel(name: "")
+        let nation = population.state
+        let year = population.year
+        let populationNumber = population.population
+        
+        return PopulationListCellViewModel(nation: nation, year: year, population: populationNumber)
 
     }
     

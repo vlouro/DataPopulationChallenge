@@ -8,5 +8,7 @@
 import Foundation
 
 struct PopulationListCellViewModel {
-    let name: String
+    let nation: String
+    let year: String
+    let population: Int
 }

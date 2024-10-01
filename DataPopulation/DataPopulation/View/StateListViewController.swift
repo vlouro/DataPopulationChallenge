@@ -46,11 +46,11 @@ class StateListViewController: UIViewController {
     
     //MARK: SETUP VIEW
     func setupViews() {
-        self.title = "NationList"
+        self.title = "State List"
         self.view.backgroundColor = .white
         self.stateCollectionView.delegate = self
         self.stateCollectionView.dataSource = self
-        self.stateCollectionView.register(UINib(nibName: "NationListCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: cellIdentifier)
+        self.stateCollectionView.register(PopulationListViewCell.self, forCellWithReuseIdentifier: cellIdentifier)
         self.view.addSubview(stateCollectionView)
         
         NSLayoutConstraint.activate([
@@ -78,9 +78,10 @@ extension StateListViewController: UICollectionViewDelegate {
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
 
-            let cell = stateCollectionView.dequeueReusableCell(withReuseIdentifier: self.cellIdentifier, for: indexPath) as! PopulationListViewCell
-            
-            return cell
+        let cell = stateCollectionView.dequeueReusableCell(withReuseIdentifier: self.cellIdentifier, for: indexPath) as! PopulationListViewCell
+        cell.cellViewModel = self.viewModel.stateCellViewModels[indexPath.row]
+        cell.layer.addBorder(edge: .bottom, color: .gray, thickness: 1)
+        return cell
     }
     
 }

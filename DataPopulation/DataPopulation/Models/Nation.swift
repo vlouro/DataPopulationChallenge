@@ -12,7 +12,7 @@ typealias NationPopulation = [Nation]
 // MARK: - Api Response
 struct NationApiResponse: Codable {
     let data: [Nation]?
-    let source : Source
+    let source : [Source]?
 }
 
 struct Nation : Codable {

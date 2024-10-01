@@ -11,7 +11,7 @@ struct Source : Codable {
     let measures : [String]
     let annotations: Annotation
     let name : String
-    let substitution: [String]
+    let substitutions: [String]?
 }
 
 struct Annotation : Codable {
