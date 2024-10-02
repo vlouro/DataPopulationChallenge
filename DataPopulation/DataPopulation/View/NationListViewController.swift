@@ -11,6 +11,7 @@ import UIKit
 class NationListViewController: UIViewController {
     
     let cellIdentifier = "NationListCollectionViewCell"
+    var noDatalabel: UILabel?
     
     let nationCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -59,25 +60,53 @@ class NationListViewController: UIViewController {
     }
     
     func initViewModel() {
+        self.view.activityStartAnimating(activityColor: .black, backgroundColor: .black.withAlphaComponent(0.5))
         if viewModel.getNationData() == true {
+            self.view.activityStopAnimating()
             let alert = UIAlertController(title: "Alert", message: "An error as occured loading the list, please try again", preferredStyle: UIAlertController.Style.alert)
             alert.addAction(UIAlertAction(title: "Yes", style: .default, handler: {_ in 
                 self.initViewModel()
                 }))
             alert.addAction(UIAlertAction(title: "No", style: .cancel, handler: {_ in
-                self.showViewError()
+                self.updateViewState()
             }))
             self.present(alert, animated: true, completion: nil)
         }
+        
         viewModel.reloadCollectionView = { [weak self] in
             DispatchQueue.main.async {
+                self?.updateViewState()
+                self?.view.activityStopAnimating()
                 self?.nationCollectionView.reloadData()
             }
         }
     }
     
-    func showViewError() {
-        
+    func updateViewState() {
+        if viewModel.nationCellViewModels.count == 0 && self.noDatalabel == nil {
+            self.noDatalabel = UILabel()
+            self.noDatalabel?.text = "No data for population available"
+            self.noDatalabel?.translatesAutoresizingMaskIntoConstraints = false
+            self.noDatalabel?.textAlignment = .center
+            guard let lblNoData = self.noDatalabel else {
+                return
+            }
+            self.view.addSubview(lblNoData)
+            
+            NSLayoutConstraint.activate([
+                lblNoData.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),
+                lblNoData.centerYAnchor.constraint(equalTo: self.view.centerYAnchor),
+                lblNoData.heightAnchor.constraint(equalToConstant: 40),
+                lblNoData.widthAnchor.constraint(equalToConstant: self.view.frame.size.width-40)
+            ])
+            
+            self.nationCollectionView.isHidden = true
+        } else if self.noDatalabel != nil && viewModel.nationCellViewModels.count >= 1 {
+            DispatchQueue.main.async {
+                self.noDatalabel?.removeFromSuperview()
+                self.nationCollectionView.isHidden = false
+            }
+        }
     }
     
 }
@@ -112,15 +141,4 @@ extension NationListViewController: UICollectionViewDelegateFlowLayout {
             return CGSize(width: width, height: height)
     }
     
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-            return .zero
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-            return .zero
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        return .zero
-    }
 }

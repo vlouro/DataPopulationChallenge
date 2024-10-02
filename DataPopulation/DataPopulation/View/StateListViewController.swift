@@ -4,16 +4,13 @@
 //
 //  Created by Valter Louro on 30/09/2024.
 //
-
-import Foundation
-import UIKit
-
 import Foundation
 import UIKit
 
 class StateListViewController: UIViewController {
     
     let cellIdentifier = "StateListCollectionViewCell"
+    var noDatalabel: UILabel?
     
     let stateCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -62,15 +59,54 @@ class StateListViewController: UIViewController {
     }
     
     func initViewModel() {
+        self.view.activityStartAnimating(activityColor: .black, backgroundColor: .black.withAlphaComponent(0.5))
+        if viewModel.getStateData() == true {
+            self.view.activityStopAnimating()
+            let alert = UIAlertController(title: "Alert", message: "An error as occured loading the list, please try again", preferredStyle: UIAlertController.Style.alert)
+            alert.addAction(UIAlertAction(title: "Yes", style: .default, handler: {_ in
+                self.initViewModel()
+                }))
+            alert.addAction(UIAlertAction(title: "No", style: .cancel, handler: {_ in
+                self.updateViewState()
+            }))
+            self.present(alert, animated: true, completion: nil)
+        }
         
-        viewModel.getStateData()
         viewModel.reloadCollectionView = { [weak self] in
             DispatchQueue.main.async {
+                self?.updateViewState()
+                self?.view.activityStopAnimating()
                 self?.stateCollectionView.reloadData()
             }
         }
     }
     
+    func updateViewState() {
+        if viewModel.stateCellViewModels.count == 0 && self.noDatalabel == nil {
+            self.noDatalabel = UILabel()
+            self.noDatalabel?.text = "No data for population available"
+            self.noDatalabel?.translatesAutoresizingMaskIntoConstraints = false
+            self.noDatalabel?.textAlignment = .center
+            guard let lblNoData = self.noDatalabel else {
+                return
+            }
+            self.view.addSubview(lblNoData)
+            
+            NSLayoutConstraint.activate([
+                lblNoData.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),
+                lblNoData.centerYAnchor.constraint(equalTo: self.view.centerYAnchor),
+                lblNoData.heightAnchor.constraint(equalToConstant: 40),
+                lblNoData.widthAnchor.constraint(equalToConstant: self.view.frame.size.width-40)
+            ])
+            
+            self.stateCollectionView.isHidden = true
+        } else if self.noDatalabel != nil && viewModel.stateCellViewModels.count >= 1 {
+            DispatchQueue.main.async {
+                self.noDatalabel?.removeFromSuperview()
+                self.stateCollectionView.isHidden = false
+            }
+        }
+    }
 }
 
 //MARK: COLLECTIONVIEW DELEGATE
@@ -103,15 +139,4 @@ extension StateListViewController: UICollectionViewDelegateFlowLayout {
             return CGSize(width: width, height: height)
     }
     
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-            return .zero
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-            return .zero
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        return .zero
-    }
 }

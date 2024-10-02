@@ -25,7 +25,8 @@ class StateViewModel: NSObject {
     }
     
     //MARK: Get State Data
-    func getStateData() {
+    func getStateData() -> Bool {
+        var error = false
         NetworkRequests.shared.getPopulationStateList { result in
             switch result {
                 
@@ -37,9 +38,11 @@ class StateViewModel: NSObject {
                 self.decodeStateData(stateData: stateDataResponse)
                 break
             case .error(_):
+                error = true
                 print("There was an error")
             }
         }
+        return error
     }
     
     func decodeStateData(stateData: StateApiResponse) {
