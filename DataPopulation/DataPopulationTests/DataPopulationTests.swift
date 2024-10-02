@@ -48,7 +48,7 @@ class DataPopulationTests : XCTestCase {
                 hasError = true
             }
         }
-    
+        
         // Assert
         XCTAssert(nationArr.count > 0)
         XCTAssertFalse(hasError)
@@ -73,7 +73,7 @@ class DataPopulationTests : XCTestCase {
                 hasError = true
             }
         }
-    
+        
         // Assert
         XCTAssert(stateArr.count > 0)
         XCTAssertFalse(hasError)
@@ -103,7 +103,7 @@ class DataPopulationTests : XCTestCase {
         
         // When creat cell view model
         let cellViewModel = nationVM.createPopulationCellModel(population: nation)
-    
+        
         // Assert the correctness of display information
         XCTAssertEqual(nation.nation, cellViewModel.nation)
         XCTAssertEqual(nation.year, cellViewModel.year)
@@ -116,11 +116,11 @@ class DataPopulationTests : XCTestCase {
         
         // When creat cell view model
         let cellViewModel = stateVM.createPopulationCellModel(population: state)
-    
+        
         // Assert the correctness of display information
         XCTAssertEqual(state.state, cellViewModel.nation)
         XCTAssertEqual(state.year, cellViewModel.year)
         XCTAssertEqual(state.population, cellViewModel.population)
     }
-
+    
 }

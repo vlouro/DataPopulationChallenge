@@ -1,18 +1,19 @@
 //
-//  StateListViewController.swift
+//  NationListViewController.swift
 //  DataPopulation
 //
 //  Created by Valter Louro on 30/09/2024.
 //
+
 import Foundation
 import UIKit
 
-class StateListViewController: UIViewController {
+class NationListViewController: UIViewController {
     
-    let cellIdentifier = "StateListCollectionViewCell"
+    let cellIdentifier = "NationListCollectionViewCell"
     var noDatalabel: UILabel?
     
-    let stateCollectionView: UICollectionView = {
+    let nationCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
         let collectionview = UICollectionView(frame: .zero, collectionViewLayout: layout)
@@ -23,13 +24,12 @@ class StateListViewController: UIViewController {
     }()
     
     lazy var viewModel = {
-        StateViewModel()
+        NationViewModel()
     }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // Do any additional setup after loading the view.
         self.setupNavigationBarLayout()
         self.setupViews()
         self.initViewModel()
@@ -43,29 +43,30 @@ class StateListViewController: UIViewController {
     
     //MARK: SETUP VIEW
     func setupViews() {
-        self.title = "State List"
+        self.title = "Nation List"
         self.view.backgroundColor = .white
-        self.stateCollectionView.delegate = self
-        self.stateCollectionView.dataSource = self
-        self.stateCollectionView.register(PopulationListViewCell.self, forCellWithReuseIdentifier: cellIdentifier)
-        self.view.addSubview(stateCollectionView)
+        self.nationCollectionView.delegate = self
+        self.nationCollectionView.dataSource = self
+        self.nationCollectionView.register(PopulationListViewCell.self, forCellWithReuseIdentifier: cellIdentifier)
+        self.view.addSubview(nationCollectionView)
         
         NSLayoutConstraint.activate([
-            stateCollectionView.topAnchor.constraint(equalTo: self.view.layoutMarginsGuide.topAnchor),
-            stateCollectionView.bottomAnchor.constraint(equalTo: self.view.layoutMarginsGuide.bottomAnchor),
-            stateCollectionView.leftAnchor.constraint(equalTo: self.view.leftAnchor),
-            stateCollectionView.rightAnchor.constraint(equalTo: self.view.rightAnchor)
+            nationCollectionView.topAnchor.constraint(equalTo: self.view.layoutMarginsGuide.topAnchor),
+            nationCollectionView.bottomAnchor.constraint(equalTo: self.view.layoutMarginsGuide.bottomAnchor),
+            nationCollectionView.leftAnchor.constraint(equalTo: self.view.leftAnchor),
+            nationCollectionView.rightAnchor.constraint(equalTo: self.view.rightAnchor)
         ])
     }
     
+    //MARK: Init ViewModel
     func initViewModel() {
         self.view.activityStartAnimating(activityColor: .black, backgroundColor: .black.withAlphaComponent(0.5))
-        if viewModel.getStateData() == true {
+        if viewModel.getNationData() == true {
             self.view.activityStopAnimating()
             let alert = UIAlertController(title: "Alert", message: "An error as occured loading the list, please try again", preferredStyle: UIAlertController.Style.alert)
             alert.addAction(UIAlertAction(title: "Yes", style: .default, handler: {_ in
                 self.initViewModel()
-                }))
+            }))
             alert.addAction(UIAlertAction(title: "No", style: .cancel, handler: {_ in
                 self.updateViewState()
             }))
@@ -76,13 +77,14 @@ class StateListViewController: UIViewController {
             DispatchQueue.main.async {
                 self?.updateViewState()
                 self?.view.activityStopAnimating()
-                self?.stateCollectionView.reloadData()
+                self?.nationCollectionView.reloadData()
             }
         }
     }
     
+    //MARK: Update View State
     func updateViewState() {
-        if viewModel.stateCellViewModels.count == 0 && self.noDatalabel == nil {
+        if viewModel.nationCellViewModels.count == 0 && self.noDatalabel == nil {
             self.noDatalabel = UILabel()
             self.noDatalabel?.text = "No data for population available"
             self.noDatalabel?.translatesAutoresizingMaskIntoConstraints = false
@@ -99,23 +101,24 @@ class StateListViewController: UIViewController {
                 lblNoData.widthAnchor.constraint(equalToConstant: self.view.frame.size.width-40)
             ])
             
-            self.stateCollectionView.isHidden = true
-        } else if self.noDatalabel != nil && viewModel.stateCellViewModels.count >= 1 {
+            self.nationCollectionView.isHidden = true
+        } else if self.noDatalabel != nil && viewModel.nationCellViewModels.count >= 1 {
             DispatchQueue.main.async {
                 self.noDatalabel?.removeFromSuperview()
-                self.stateCollectionView.isHidden = false
+                self.nationCollectionView.isHidden = false
             }
         }
     }
+    
 }
 
 //MARK: COLLECTIONVIEW DELEGATE
-extension StateListViewController: UICollectionViewDelegate {
+extension NationListViewController: UICollectionViewDelegate {
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-
-        let cell = stateCollectionView.dequeueReusableCell(withReuseIdentifier: self.cellIdentifier, for: indexPath) as! PopulationListViewCell
-        cell.cellViewModel = self.viewModel.stateCellViewModels[indexPath.row]
+        
+        let cell = nationCollectionView.dequeueReusableCell(withReuseIdentifier: self.cellIdentifier, for: indexPath) as! PopulationListViewCell
+        cell.cellViewModel = self.viewModel.nationCellViewModels[indexPath.row]
         cell.layer.addBorder(edge: .bottom, color: .gray, thickness: 1)
         return cell
     }
@@ -123,20 +126,20 @@ extension StateListViewController: UICollectionViewDelegate {
 }
 
 //MARK: COLLECTIONVIEW DATA SOURCE
-extension StateListViewController: UICollectionViewDataSource {
+extension NationListViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return viewModel.stateCellViewModels.count
+        return viewModel.nationCellViewModels.count
     }
 }
 
 //MARK: COLLECTIONVIEW DELEGATEFLOWLAYOUT
-extension StateListViewController: UICollectionViewDelegateFlowLayout {
+extension NationListViewController: UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-            let width = CGFloat(UIScreen.main.bounds.size.width)
-            let height = CGFloat(100)
-            
-            return CGSize(width: width, height: height)
+        let width = CGFloat(UIScreen.main.bounds.size.width)
+        let height = CGFloat(100)
+        
+        return CGSize(width: width, height: height)
     }
     
 }

@@ -8,7 +8,7 @@
 import UIKit
 
 class ViewController: UITabBarController {
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
@@ -21,7 +21,7 @@ class ViewController: UITabBarController {
         self.navigationController?.navigationBar.standardAppearance.titleTextAttributes = [.foregroundColor: UIColor.customBarTintColor ?? UIColor.white]
         self.setupTabControllers()
     }
-
+    
     func setupTabControllers(){
         // Set up the Product List View Controller
         let nationViewController = UINavigationController(rootViewController: NationListViewController())
@@ -36,7 +36,7 @@ class ViewController: UITabBarController {
         let controllers = [nationViewController, stateViewController]
         self.viewControllers = controllers
     }
-
+    
 }
 
 extension ViewController: UITabBarControllerDelegate {

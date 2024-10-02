@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 
 class PopulationListViewCell : UICollectionViewCell {
-
+    
     let informationContentView: UIView = {
         let v = UIView()
         v.translatesAutoresizingMaskIntoConstraints = false

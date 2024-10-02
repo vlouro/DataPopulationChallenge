@@ -64,9 +64,7 @@ class NationViewModel: NSObject {
         let nation = population.nation
         let year = population.year
         let populationNumber = population.population
-        
         return PopulationListCellViewModel(nation: nation, year: year, population: populationNumber)
-        
     }
     
     func getNationViewModel(at indexPath: IndexPath) -> PopulationListCellViewModel {

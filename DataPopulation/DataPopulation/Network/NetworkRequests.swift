@@ -18,7 +18,7 @@ protocol PopulationDataProtocol {
 }
 
 class NetworkRequests: PopulationDataProtocol {
-   
+    
     // MARK: Variables
     static let shared = NetworkRequests()
     
