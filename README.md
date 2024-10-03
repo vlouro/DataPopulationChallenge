@@ -10,8 +10,10 @@ I could had used another approach with a button on the navigation bar to switch 
 
 For Improvements:
 The use of SwiftUI with combine for better and updated code/technology
+For the list, I would also add load more while scrolling down with the appropriated functions to do it.
 
 Regarding the network handling:
 -An enum for the different errors messages
+-Request the API with pages (didn't found anything in the documentation regarding those parameters for the url)
 -The request functions to have more parameters on the completionHandler, for example 
 	(_ success: Bool, _ data: [Any], _ error: String?)
